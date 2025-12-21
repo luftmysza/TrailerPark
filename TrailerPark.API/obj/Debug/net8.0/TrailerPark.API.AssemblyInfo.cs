@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TrailerPark.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f52a4939e8c9880ef830c003c91b2d6090452927")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8df31645d312c3b9b1c079377a7462640177c37e")]
 [assembly: System.Reflection.AssemblyProductAttribute("TrailerPark.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TrailerPark.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

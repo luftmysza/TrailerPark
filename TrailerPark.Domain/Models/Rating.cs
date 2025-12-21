@@ -8,6 +8,7 @@ namespace TrailerPark.Core.Models;
 
 public class Rating
 {
+    public int RatingID { get;set; }
     public string? Source { get; set; }
     public float? Value { get; set; }
 }

@@ -27,9 +27,6 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/home/luftmysza/Repos/TrailerPark/TrailerPark.Domain/TrailerPark.Core.csproj": {
-                "projectPath": "/home/luftmysza/Repos/TrailerPark/TrailerPark.Domain/TrailerPark.Core.csproj"
-              },
               "/home/luftmysza/Repos/TrailerPark/TrailerPark.Intrastructure/TrailerPark.Intrastructure.csproj": {
                 "projectPath": "/home/luftmysza/Repos/TrailerPark/TrailerPark.Intrastructure/TrailerPark.Intrastructure.csproj"
               }
@@ -51,20 +48,6 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "dependencies": {
-            "Microsoft.EntityFrameworkCore": {
-              "target": "Package",
-              "version": "[8.0.18, )"
-            },
-            "Microsoft.EntityFrameworkCore.InMemory": {
-              "target": "Package",
-              "version": "[8.0.18, )"
-            },
-            "Swashbuckle.AspNetCore": {
-              "target": "Package",
-              "version": "[10.0.1, )"
-            }
-          },
           "imports": [
             "net461",
             "net462",
@@ -90,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
@@ -150,7 +133,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
@@ -203,9 +186,13 @@
               "target": "Package",
               "version": "[8.0.18, )"
             },
-            "Microsoft.Extensions.Configuration": {
+            "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
-              "version": "[10.0.0, )"
+              "version": "[8.0.18, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[10.0.1, )"
             }
           },
           "imports": [
@@ -224,7 +211,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

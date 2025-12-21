@@ -2,8 +2,6 @@
 
 using TrailerPark.Core.Models;
 using TrailerPark.Core.Services;
-using TrailerPark.Core.Interfaces;
-
 
 namespace TrailerPark.API.Controllers;
 
@@ -24,11 +22,22 @@ public class MoviesController : ControllerBase
         if (movieQuery is null) 
             return BadRequest("Provided parameters do not meet API requirements");
 
-        Movie? result = await _service.Inbound(movieQuery);
+        IEnumerable<Movie?>? result = null!;
 
+        try
+        {
+            result = await _service.Inbound(movieQuery);
+        }
+        catch (Exception)
+        {
+            return ValidationProblem();
+        }
+        
         if (result is null)
-            return NotFound("Provided parameters did not return any result");
-        else
-            return Ok(result);
+        {
+            return NoContent();
+        }
+        
+        return Ok(result);
     }
 }

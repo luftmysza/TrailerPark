@@ -3,10 +3,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 using TrailerPark.Core.Models;
 using TrailerPark.Core.Interfaces;
-using System.Runtime.Serialization;
+
 
 namespace TrailerPark.Core.Services;
 
@@ -19,46 +20,58 @@ public class MovieService
         _movieRepo = movieRepo;
         _omdbClient = omdbClient;
     }
-    public async Task<Movie?> Inbound(MovieQuery movieQuery)
+    public async Task<IEnumerable<Movie?>?> Inbound(MovieQuery movieQuery)
     {
-        Movie? movieLocal = null;
-        Movie? movieFetched = null;
-        Movie? movie;
+        IEnumerable<Movie?>? movieLocalList = null;
+        IEnumerable<Movie?>? movieFetchedList = null;
 
-        movieLocal = await GetLocalAsync(movieQuery);
-        if (movieLocal is null)
+        try
         {
-            movieFetched = await FetchOmdbAsync(movieQuery);
-            if (movieFetched is not null)
+            movieLocalList = await GetLocalAsync(movieQuery);
+            if (movieLocalList is not null)
+                return movieLocalList;
+        }
+        catch (Exception) {}
+      
+        try
+        {
+            movieFetchedList = await FetchOmdbAsync(movieQuery);
+            if (movieFetchedList is not null)
             {
-                bool ok = await _movieRepo.AddAsync(movieFetched);
-                if (!ok)
-                    return null;
-                movie = movieFetched;
+                await _movieRepo.AddBatchAsync(movieFetchedList);
+                return movieFetchedList;
             }
         }
+        catch (Exception) {}
 
-        throw new NotImplementedException();
-        return movie;     
+        return null;  
     }
-    public async Task<Movie?> GetLocalAsync(MovieQuery movieQuery)
+    public async Task<IEnumerable<Movie?>?> GetLocalAsync(MovieQuery movieQuery)
     {
-        Movie? movieLocal = null;
+        IEnumerable<Movie?>? movieLocalList = null;
         if (movieQuery.imdbID is not null)
-            movieLocal = await _movieRepo.GetByIdAsync(movieQuery);
-        else if (movieQuery.SearchString is not null)
-            movieLocal = await _movieRepo.GetBySearchAsync(movieQuery);
+        {
+            var getBuffer = await _movieRepo.GetByIdAsync(movieQuery);
+            if (getBuffer is not null)
+                movieLocalList = new[] { getBuffer };                
+        }
+        // else if (movieQuery.SearchString is not null)
+        //     movieLocalList = await _movieRepo.GetBySearchAsync(movieQuery);
 
-        return movieLocal;
+        return movieLocalList;
     }
-    public async Task<Movie?> FetchOmdbAsync(MovieQuery movieQuery)
+    public async Task<IEnumerable<Movie?>?>  FetchOmdbAsync(MovieQuery movieQuery)
     {
-        Movie? movieFetched = null;
+        IEnumerable<Movie?>? movieFetchedList = null;
         if (movieQuery.imdbID is not null)
-            movieFetched = await _omdbClient.FetchByIdAsync(movieQuery);
-        else if (movieQuery.SearchString is not null)
-            movieFetched = await _omdbClient.FetchBySearchAsync(movieQuery);
+        {
+            var fetchBuffer =  await _omdbClient.FetchByIdAsync(movieQuery);
+            if (fetchBuffer is not null)
+                movieFetchedList = new[] { fetchBuffer };
+        }
+        // else if (movieQuery.SearchString is not null)
+        //     movieFetchedList = await _omdbClient.FetchBySearchAsync(movieQuery);
 
-        return movieFetched;
+        return movieFetchedList;
     }
 }

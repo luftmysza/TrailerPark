@@ -5,69 +5,52 @@ using Microsoft.Extensions.Configuration;
 
 using TrailerPark.Core.Models;
 using TrailerPark.Core.Interfaces;
+using System.Reflection.Metadata.Ecma335;
 
 namespace TrailerPark.Intrastructure.Omdb;
 
 public class OmdbClient : IExternalMovieProvider
 {
     private readonly HttpClient _http;
+    private readonly string _apiBase;
     private readonly string _apiKey;
 
     public OmdbClient(HttpClient httpClient, IConfiguration configuration)
     {
         _http = httpClient;
+        _apiBase = configuration["Omdb:BaseUrl"]!; 
         _apiKey = configuration["Omdb:ApiKey"]!;
     }
     public async Task<Movie?> FetchByIdAsync(MovieQuery movieQuery)
     {
-        //var url = $"?t={Uri.EscapeDataString(id)}&apikey={_apiKey}";
-
-        var url = "https://www.omdbapi.com/?i=tt3896198&apikey=93ee7c7a";
+        var url = $"{_apiBase}?i={Uri.EscapeDataString(movieQuery?.imdbID!)}&apikey={_apiKey}";
 
         OmdbMovie? movieFetched = await _http.GetFromJsonAsync<OmdbMovie>(url);
-        Movie? movieMapped = await Mapper(movieFetched);
+        if (movieFetched is null) return null;
 
-        throw new NotImplementedException();
+        Movie? movieMapped = OOMapper.MapToMovie(movieFetched);
         return movieMapped;
     }
+    public async Task<IEnumerable<Movie?>?> FetchBySearchAsync(MovieQuery movieQuery)
+    {
+        var url = $"?t={Uri.EscapeDataString(movieQuery?.SearchString!)}&apikey={_apiKey}";
+
+        IEnumerable<OmdbMovie>? movieFetchedList = await _http.GetFromJsonAsync<IEnumerable<OmdbMovie>>(url);
+        if (movieFetchedList is null) return null;
+
+        IEnumerable<Movie?>? movieMappedList = await Task.WhenAll(movieFetchedList.Select(async m => await FetchByIdAsync(new MovieQuery(){ imdbID = m.imdbID })));
+
+        return movieMappedList;
+    }
+
+
+
+    
     public async Task<Movie?> FetchByTitleAsync(MovieQuery movieQuery)
     {
-        //var url = $"?t={Uri.EscapeDataString(id)}&apikey={_apiKey}";
-
-        var url = "https://www.omdbapi.com/?i=tt3896198&apikey=93ee7c7a";
-
-        OmdbMovie? movieFetched = await _http.GetFromJsonAsync<OmdbMovie>(url);
-        Movie? movieMapped = await Mapper(movieFetched);
-
         throw new NotImplementedException();
-        return movieMapped;
     }
     public async Task<Movie?> FetchByTypeAsync(MovieQuery movieQuery)
-    {
-        //var url = $"?t={Uri.EscapeDataString(id)}&apikey={_apiKey}";
-
-        var url = "https://www.omdbapi.com/?i=tt3896198&apikey=93ee7c7a";
-
-        OmdbMovie? movieFetched = await _http.GetFromJsonAsync<OmdbMovie>(url);
-        Movie? movieMapped = await Mapper(movieFetched);
-
-        throw new NotImplementedException();
-        return movieMapped;
-    }
-    public async Task<Movie?> FetchBySearchAsync(MovieQuery movieQuery)
-    {
-        //var url = $"?t={Uri.EscapeDataString(id)}&apikey={_apiKey}";
-
-        var url = "https://www.omdbapi.com/?i=tt3896198&apikey=93ee7c7a";
-
-        OmdbMovie? movieFetched = await _http.GetFromJsonAsync<OmdbMovie>(url);
-        Movie? movieMapped = await Mapper(movieFetched);
-
-        throw new NotImplementedException();
-        return movieMapped;
-    }
-
-    private async Task<Movie?> Mapper(OmdbMovie? movieFetched)
     {
         throw new NotImplementedException();
     }

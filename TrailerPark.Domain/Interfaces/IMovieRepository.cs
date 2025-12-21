@@ -10,9 +10,9 @@ namespace TrailerPark.Core.Interfaces;
 
 public interface IMovieRepository
 {
-    public Task<Movie?> GetBySearchAsync(MovieQuery movieQuery);
     public Task<Movie?> GetByIdAsync(MovieQuery movieQuery);
+    public Task<IEnumerable<Movie?>?> GetBySearchAsync(MovieQuery movieQuery);
     // public Task<Movie?> GetByTypeAsync(MovieQuery movieQuery);
     // public Task<Movie?> GetBySearchAsync(MovieQuery movieQuery);
-    public Task<bool> AddAsync(Movie movie);
+    public Task AddBatchAsync(IEnumerable<Movie?> movies);
 }

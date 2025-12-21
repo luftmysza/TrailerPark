@@ -12,17 +12,17 @@ namespace TrailerPark.Core.Models;
 public class Movie
 {
     [Key]
-    public string? imdbID { get; set; }
-    public string? Title { get; set; } = "";
+    public string imdbID { get; set; } = null!;
+    public string? Title { get; set; }
     public string? TitleNormalized => Title?.ToUpper();
-    public string? Year { get; set; }
-    public float? Rated { get; set; }
-    public DateTime? Released { get; set; } = DateTime.Now;
-    public string? RuntimeMin { get; set; }
+    public int? Year { get; set; }
+    public string? Rated { get; set; }
+    public DateOnly? Released { get; set; }
+    public int? RuntimeMin { get; set; }
     public string? Genre { get; set; }
     public Person? Director { get; set; }
     public Person? Writer { get; set; }
-    public List<Person>? Actors { get; set; }
+    // public List<Person>? Actors { get; set; }
     public string? Plot { get; set; }
     public string? LanguageISO { get; set; }
     public string? CountryISO { get; set; }
@@ -32,9 +32,9 @@ public class Movie
     public string? Metascore { get; set; }
     public string? imdbRating { get; set; }
     public int? imdbVotes { get; set; }
-    public string? Type { get; set; }
+    public Core.Models.Type? Type { get; set; }
     public string? DVD { get; set; }
-    //public string? BoxOffice { get; set; }
+    public decimal? BoxOffice { get; set; }
     public string? Production { get; set; }
     public string? Website { get; set; }
     public string? Response { get; set; }
