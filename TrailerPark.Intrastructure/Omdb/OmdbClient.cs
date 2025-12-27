@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 
 using TrailerPark.Core.Models;
 using TrailerPark.Core.Interfaces;
-using System.Reflection.Metadata.Ecma335;
 
 namespace TrailerPark.Intrastructure.Omdb;
 
@@ -33,14 +32,15 @@ public class OmdbClient : IExternalMovieProvider
     }
     public async Task<IEnumerable<Movie?>?> FetchBySearchAsync(MovieQuery movieQuery)
     {
-        var url = $"?t={Uri.EscapeDataString(movieQuery?.SearchString!)}&apikey={_apiKey}";
+        throw new NotImplementedException();
+        //var url = $"?t={Uri.EscapeDataString(movieQuery?.SearchString!)}&apikey={_apiKey}";
 
-        IEnumerable<OmdbMovie>? movieFetchedList = await _http.GetFromJsonAsync<IEnumerable<OmdbMovie>>(url);
-        if (movieFetchedList is null) return null;
+        // IEnumerable<OmdbMovie>? movieFetchedList = await _http.GetFromJsonAsync<IEnumerable<OmdbMovie>>(url);
+        // if (movieFetchedList is null) return null;
 
-        IEnumerable<Movie?>? movieMappedList = await Task.WhenAll(movieFetchedList.Select(async m => await FetchByIdAsync(new MovieQuery(){ imdbID = m.imdbID })));
+        // IEnumerable<Movie?>? movieMappedList = await Task.WhenAll(movieFetchedList.Select(async m => await FetchByIdAsync(new MovieQuery(){ imdbID = m.imdbID })));
 
-        return movieMappedList;
+        // return movieMappedList;
     }
 
 

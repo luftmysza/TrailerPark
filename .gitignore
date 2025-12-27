@@ -10,6 +10,9 @@
 #Secretes, certifikates, keys
 NOTETOSELF.md
 
+# additional configs
+*.toml
+
 # VS and VS Code
 .vs/
 .vscode/
