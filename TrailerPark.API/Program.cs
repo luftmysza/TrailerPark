@@ -1,14 +1,21 @@
-
 using TrailerPark.Intrastructure.Config;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.InjectCustom();
+// Custom
+builder.InjectInfrastructure();
 
 WebApplication app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (!app.Environment.IsProduction())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// Custom
+await app.InjectSeedAsync();
+
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

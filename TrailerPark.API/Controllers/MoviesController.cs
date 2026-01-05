@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using TrailerPark.Core.Models;
-using TrailerPark.Core.Services;
+using TrailerPark.Application.Services;
 
 namespace TrailerPark.API.Controllers;
 
