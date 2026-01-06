@@ -18,6 +18,6 @@ jobs:
         uses: docker/setup-compose-action@v1.2.0
         
       - name: Docker Compose
-        run: test $(docker compose build)
+        run: docker compose build
       
 
