@@ -17,7 +17,7 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.22"
+          dotnet-version: "8.0.122"
 
       - name: Restore the solution
         run: dotnet restore TrailerPark.sln
