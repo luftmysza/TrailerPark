@@ -1,0 +1,153 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: trailerpark
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+  namespace: trailerpark
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: "password"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+  namespace: trailerpark
+data:
+  POSTGRES_DB: "appdatabase"
+  POSTGRES_USER: "appuser"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: trailerpark
+spec:
+  selector:
+    app: trailerpark-db
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: trailerpark-db
+  namespace: trailerpark
+spec:
+  serviceName: db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trailerpark-db
+  template:
+    metadata:
+      labels:
+        app: trailerpark-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-bookworm
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U appuser -d appdatabase"]
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 20
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-secret
+  namespace: trailerpark
+type: Opaque
+stringData:
+  Omdb__ApiKey: "<WSTAW_OMDB_API_KEY>"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+  namespace: trailerpark
+data:
+  ASPNETCORE_ENVIRONMENT: "Staging"
+  ASPNETCORE_URLS: "http://+:8080"
+  Omdb__BaseUrl: "https://www.omdbapi.com/"
+  ConnectionStrings__DB: "Host=db;Port=5432;Database=appdatabase;Username=appuser;Password=password"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trailerpark-api
+  namespace: trailerpark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trailerpark-api
+  template:
+    metadata:
+      labels:
+        app: trailerpark-api
+    spec:
+      containers:
+        - name: api
+          image: trailerpark-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: api-config
+            - secretRef:
+                name: api-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: trailerpark
+spec:
+  type: NodePort
+  selector:
+    app: trailerpark-api
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
